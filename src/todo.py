@@ -20,14 +20,6 @@
 
         return response
 
-
-    def get_collection():
-        status, mongo_client = connect_to_cluster()
-        status, db = init_db(mongo_client)
-        status, collection = init_collection(db)
-        return status, collection
-
-
     def init_collection(db):
         # Create a new collection in our db: "celestial_bodies"
         try:

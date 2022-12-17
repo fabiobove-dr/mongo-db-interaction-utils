@@ -74,7 +74,12 @@ class MongoUtils:
 
     def init_cluster(self):
         self.connect_to_cluster()
-        return True
+        self.init_dabase()
+        # TODO: 
+        # self.init_collection()
+        # self.init_documents()
+        
+        
 
 
 
