@@ -1,5 +1,5 @@
        
-    """
+"""
     def initialize_cluster():
         response = {'status': []}
 
