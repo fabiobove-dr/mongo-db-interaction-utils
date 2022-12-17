@@ -28,27 +28,6 @@
         return status, collection
 
 
-    def get_db():
-        status, mongo_client = connect_to_cluster()
-        status, db = init_db(mongo_client)
-        return status, db
-
-    def init_db(mongo_client):
-        # Create (if don't exists yet) a new database on our cluster: "nasa"
-        try:
-            db_list = mongo_client.list_database_names()
-            if DATABASE in db_list:
-                status = "The database already exists."
-                db = mongo_client.get_database(DATABASE)
-            else:
-                db = mongo_client.nasa
-                status = "Database created successfully."
-        except Exception as e:
-            status = f"Something went wrong during db creation: \n {e}"
-            db = None
-        return status, db
-
-
     def init_collection(db):
         # Create a new collection in our db: "celestial_bodies"
         try:

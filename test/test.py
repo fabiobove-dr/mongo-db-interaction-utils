@@ -10,7 +10,8 @@ DATA_SET_PATH = "dataset/dataset.json" # dataset path (dataset should be a .json
 
 def import_data(data_path: str) -> json or None:
     try:
-        data = open(data_path) # Opening JSON file
+        f = open(data_path) # Opening JSON file
+        data = json.load(f)
         return data
     except Exception as e:
         print(f"Can't read data from path: {data_path}, {e}")

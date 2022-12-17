@@ -11,7 +11,7 @@ import json
 from pymongo import MongoClient
 
 class MongoUtils:
-    def __init__(self, auth_param: str, collection_name: str, database_name: str, data: json) -> None:
+    def __init__(self, auth_param: str, collection_name: str, database_name: str, data: dict) -> None:
         self.mongo_client = None
         self.last_op_status = None
         self.auth_param = auth_param
@@ -65,7 +65,8 @@ class MongoUtils:
             self.last_op_status = f"Something went wrong during database creation: \n {e}"
             self.database = None
 
-
+    def get_database(self):
+        return self.database
 
     def init_cluster(self):
         self.connect_to_cluster()
