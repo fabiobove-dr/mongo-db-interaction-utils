@@ -10,13 +10,6 @@ Fabio Bove | fabio.bove.dr@gmail.com
 import json
 from pymongo import MongoClient
 
-# Configuration Parameters for MongoDB connection
-AUTH_PARAM = "" # auth string
-DATABASE = "nasa" # database name
-COLLECTION = "celestial_bodies" # collection name
-DATA_SET_PATH = "dataset/dataset.json" # dataset path (dataset should be a .json file)
-
-
 class MongoUtils:
     def __init__(self, auth_param: str, collection_name: str, database_name: str, data: json) -> None:
         self.mongo_client = None
@@ -24,7 +17,8 @@ class MongoUtils:
         self.auth_param = auth_param
         self.collection_name = collection_name
         self.database_name = database_name
-        self.data = data 
+        self.data = data
+        self.database = None 
 
     def get_last_op_status(self) -> str:
         """
@@ -49,8 +43,32 @@ class MongoUtils:
             self.last_op_status = f"Something went wrong during cluster connection: \n {e}"
             self.mongo_client = None
 
+    
+    def init_dabase(self):
+        # Create (if don't exists yet) a new database on our cluster: "nasa"
+        
+        try: # Get the list of databases 
+            db_list = self.mongo_client.list_database_names()
+            self.last_op_status = "Got the list of active databases"
+        except Exception as e:
+            self.last_op_status = f"Can't get the list of database, {e}"
+            return
 
-    def init_cluster():
+        try:
+            if self.database_name in db_list:
+                self.last_op_status = f"Database {self.database_name} already exists."
+                self.database = self.mongo_client.get_database(self.database_name)
+            else:
+                self.database = self.mongo_client[self.database_name]
+                self.last_op_status = f"Database {self.database_name}  created successfully."
+        except Exception as e:
+            self.last_op_status = f"Something went wrong during database creation: \n {e}"
+            self.database = None
+
+
+
+    def init_cluster(self):
+        self.connect_to_cluster()
         return True
 
 
