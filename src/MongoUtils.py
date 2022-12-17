@@ -12,13 +12,14 @@ from pymongo import MongoClient
 
 class MongoUtils:
     def __init__(self, auth_param: str, collection_name: str, database_name: str, data: dict) -> None:
-        self.mongo_client = None
-        self.last_op_status = None
-        self.auth_param = auth_param
-        self.collection_name = collection_name
-        self.database_name = database_name
-        self.data = data
-        self.database = None 
+        self.mongo_client       = None
+        self.last_op_status     = None
+        self.database           = None 
+        self.collection         = None 
+        self.auth_param         = auth_param
+        self.collection_name    = collection_name
+        self.database_name      = database_name
+        self.data               = data
 
     def get_last_op_status(self) -> str:
         """
@@ -67,6 +68,9 @@ class MongoUtils:
 
     def get_database(self):
         return self.database
+    
+    def get_collection(self):
+        return self.collection
 
     def init_cluster(self):
         self.connect_to_cluster()

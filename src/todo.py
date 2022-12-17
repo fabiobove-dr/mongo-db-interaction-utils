@@ -44,18 +44,6 @@
         return status, collection
 
 
-    def load_data_set():
-        # Import our JSON data set
-        try:
-            with open(DATA_SET_PATH) as f:
-                data = json.load(f)
-            status = "Data set loaded successfully."
-        except Exception as e:
-            status = f"Something went wrong during data set loading: \n {e}"
-            data = None
-        return status, data
-
-
     def init_documents(data, collection):
         # Insert the document into our collection
         if collection.count_documents({}) > 0:  # We remove the old documents
