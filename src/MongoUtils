@@ -1,0 +1,59 @@
+""" 
+MongoDB Interaction - A simple example for future developments
+Fabio Bove | fabio.bove.dr@gmail.com
+"""
+
+#!/usr/bin/env python
+# coding: utf-8
+
+# Imports
+import json
+from pymongo import MongoClient
+
+# Configuration Parameters for MongoDB connection
+AUTH_PARAM = "" # auth string
+DATABASE = "nasa" # database name
+COLLECTION = "celestial_bodies" # collection name
+DATA_SET_PATH = "dataset/dataset.json" # dataset path (dataset should be a .json file)
+
+
+class MongoUtils:
+    def __init__(self, auth_param: str, collection_name: str, database_name: str, data: json) -> None:
+        self.mongo_client = None
+        self.last_op_status = None
+        self.auth_param = auth_param
+        self.collection_name = collection_name
+        self.database_name = database_name
+        self.data = data 
+
+    def get_last_op_status(self) -> str:
+        """
+        get_last_op_status, this method returns a string containing the status of the last operation made by this class
+
+        param: None
+        return: last_op_status: A string containing the status of the last operation made by this class
+        """
+        return self.last_op_status
+
+    def connect_to_cluster(self) -> None:
+        """ 
+            connect_to_cluster, this method allow to instantiate a new cluster Connection 
+
+            pram: None
+            return: None
+        """
+        try:
+            self.mongo_client = MongoClient(self.auth_param)
+            self.last_op_status = "Successfully connected to cluster."
+        except Exception as e:
+            self.last_op_status = f"Something went wrong during cluster connection: \n {e}"
+            self.mongo_client = None
+
+
+    def init_cluster():
+        return True
+
+
+
+
+     
