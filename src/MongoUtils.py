@@ -45,10 +45,12 @@ class MongoUtils:
             self.mongo_client = None
 
     
-    def init_dabase(self):
+    def create_dabase(self, database_name:str):
         """
-            init_dabase method, creates (if don't exists yet) a new database <database_name>
-            
+            create_dabase method, creates (if don't exists yet) a new database with name <database_name>
+
+            param: database_name: A string with the name of the new database
+            return: Nothing
         """
         
         try: # Get the list of databases 
@@ -59,17 +61,22 @@ class MongoUtils:
             return
 
         try:
-            if self.database_name in db_list:
-                self.last_op_status = f"Database {self.database_name} already exists."
-                self.database = self.mongo_client.get_database(self.database_name)
+            if database_name in db_list:
+                self.last_op_status = f"Database {database_name} already exists."
+                self.database = self.get_database(database_name)
             else:
-                self.database = self.mongo_client[self.database_name]
-                self.last_op_status = f"Database {self.database_name}  created successfully."
+                self.database = self.mongo_client[database_name]
+                self.last_op_status = f"Database {database_name}  created successfully."
         except Exception as e:
             self.last_op_status = f"Something went wrong during database creation: \n {e}"
             self.database = None
 
-    def get_database(self):
+    def get_database(self, database_name:str):
+        try:
+            self.database = self.mongo_client.get_database(database_name)
+            self.last_op_status = f"Recovered databse {database_name}"
+        except Exception as e:
+            self.last_op_status = f"Something went wrong getting databse: \n {e}"
         return self.database
     
     def get_collection(self):
@@ -77,7 +84,7 @@ class MongoUtils:
 
     def init_cluster(self):
         self.connect_to_cluster()
-        self.init_dabase()
+        self.create_dabase(self.database_name)
         # TODO: 
         # self.init_collection()
         # self.init_documents()
