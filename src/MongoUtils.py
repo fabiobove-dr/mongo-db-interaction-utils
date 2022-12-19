@@ -7,7 +7,6 @@ Fabio Bove | fabio.bove.dr@gmail.com
 # coding: utf-8
 
 # Imports
-import json
 from pymongo import MongoClient
 
 class MongoUtils:
@@ -44,80 +43,64 @@ class MongoUtils:
             self.last_op_status = f"Something went wrong during cluster connection: \n {e}"
             self.mongo_client = None
 
-    
-    def create_dabase(self, database_name:str):
+        
+    def init_dabase(self, database_name:str):
         """
             create_dabase method, creates (if don't exists yet) a new database with name <database_name>
 
             param: database_name: A string with the name of the new database
             return: Nothing
         """
-        
         try: # Get the list of databases 
             db_list = self.mongo_client.list_database_names()
             self.last_op_status = "Got the list of active databases"
         except Exception as e:
             self.last_op_status = f"Can't get the list of database, {e}"
             return
-
         try:
             if database_name in db_list:
                 self.last_op_status = f"Database {database_name} already exists."
-                self.database = self.get_database(database_name)
+                self.database = self.mongo_client.get_database(database_name)
             else:
                 self.database = self.mongo_client[database_name]
                 self.last_op_status = f"Database {database_name}  created successfully."
         except Exception as e:
             self.last_op_status = f"Something went wrong during database creation: \n {e}"
-            self.database = None
+            self.database = None  
 
-    def get_database(self, database_name:str):
-        try:
-            self.database = self.mongo_client.get_database(database_name)
-            self.last_op_status = f"Recovered databse {database_name}"
-        except Exception as e:
-            self.last_op_status = f"Something went wrong getting databse: \n {e}"
-        return self.database
-    
-    def get_collection(self):
-        return self.collection
-
-    def init_cluster(self):
-        self.connect_to_cluster()
-        self.create_dabase(self.database_name)
-        # TODO: 
-        # self.init_collection()
-        # self.init_documents()
-        
-        
-
-    def init_collection(db):
+    def init_collection(self, collection_name:str):
         # Create a new collection in our db: "celestial_bodies"
         try:
-            collections_list = db.list_collection_names()
-            if COLLECTION in collections_list:
-                status = "Collection already exists."
-                collection = db.get_collection(COLLECTION)
+            collections_list = self.database.list_collection_names()
+            if collection_name in collections_list:
+                self.last_op_status = f"Collection already exists."
+                self.collection = self.database.get_collection(collection_name)
             else:
-                collection = db.celestial_bodies
-                status = "Collection created successfully."
+                self.collection = self.database[collection_name]
+                self.last_op_status = f"Collection {collection_name} created successfully."
         except Exception as e:
-            status = f"Something went wrong during collection creation: \n {e}"
-            collection = None
-        return status, collection
+            self.last_op_status = f"Something went wrong during collection creation: \n {e}"
+            self.collection = None
+       
 
-
-    def init_documents(data, collection):
-        # Insert the document into our collection
-        if collection.count_documents({}) > 0:  # We remove the old documents
-            collection.delete_many({})
+    def init_documents(self, data):
+        """
+        init_documents method, inserts the documents into our collection
+        """
+        if self.collection.count_documents({}) > 0:  # We remove the old documents
+            self.collection.delete_many({})
         try:
-            [collection.insert_one(celestial_body) for celestial_body in data]
-            status = "Documents loaded successfully."
+            [self.collection.insert_one(elem) for elem in data]
+            self.last_op_status = f"Documents loaded successfully."
         except Exception as e:
-            status = f"Something went wrong during document insertion: \n {e}"
-        return status
+           self.last_op_status = f"Something went wrong during document insertion: \n {e}"
+        
 
 
 
      
+    def init_cluster(self):
+        self.connect_to_cluster()
+        self.init_dabase(self.database_name)
+        self.init_collection(self.collection_name)
+        self.init_documents(self.data)
