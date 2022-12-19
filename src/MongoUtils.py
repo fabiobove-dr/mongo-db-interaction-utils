@@ -46,7 +46,10 @@ class MongoUtils:
 
     
     def init_dabase(self):
-        # Create (if don't exists yet) a new database on our cluster: "nasa"
+        """
+            init_dabase method, creates (if don't exists yet) a new database <database_name>
+            
+        """
         
         try: # Get the list of databases 
             db_list = self.mongo_client.list_database_names()
