@@ -51,7 +51,7 @@ class MongoUtils:
             param: database_name: A string with the name of the new database
             return: Nothing
         """
-        try: # Get the list of databases 
+        try: # Get the list of databases for the current cluster
             db_list = self.mongo_client.list_database_names()
             self.last_op_status = "Got the list of active databases"
         except Exception as e:
@@ -83,7 +83,7 @@ class MongoUtils:
             self.collection = None
        
 
-    def init_documents(self, data):
+    def init_documents(self, data:dict):
         """
         init_documents method, inserts the documents into our collection
         """
@@ -96,9 +96,6 @@ class MongoUtils:
            self.last_op_status = f"Something went wrong during document insertion: \n {e}"
         
 
-
-
-     
     def init_cluster(self):
         self.connect_to_cluster()
         self.init_dabase(self.database_name)
