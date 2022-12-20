@@ -25,6 +25,18 @@ def main():
         database_name=DATABASE, 
         data=data
     )
+    mongo_utils.connect_to_cluster()
+    print(mongo_utils.get_last_op_status())
+
+    mongo_utils.init_dabase(database_name=DATABASE)
+    print(mongo_utils.get_last_op_status())
+
+    mongo_utils.init_collection(collection_name=COLLECTION)
+    print(mongo_utils.get_last_op_status())
+
+    mongo_utils.init_documents(data=data)
+    print(mongo_utils.get_last_op_status())
+
 
 if __name__ == "__main__":
     main()
