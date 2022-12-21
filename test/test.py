@@ -1,12 +1,16 @@
 from src.MongoUtils import MongoUtils
-import os
+import yaml
 import json
 
 # Configuration Parameters for MongoDB connection
-AUTH_PARAM = "mongodb+srv://fabio:<password>@simplecluster.gqsg9w2.mongodb.net/?retryWrites=true&w=majority" # auth string
-DATABASE = "nasa" # database name
-COLLECTION = "celestial_bodies" # collection name
-DATA_SET_PATH = "dataset/dataset.json" # dataset path (dataset should be a .json file)
+
+# Load the oauth_settings.yml file
+stream          = open('oauth_settings.yml', 'r')
+settings        = yaml.load(stream, yaml.SafeLoader)
+dataset_path    = settings['dataset_path']
+auth_param      = settings['auth_param']
+collection_name = settings['collection_name']
+database_name   = settings['database_name'] 
 
 def import_data(data_path: str) -> json or None:
     try:
@@ -18,25 +22,26 @@ def import_data(data_path: str) -> json or None:
     return None
 
 def main():
-    data = import_data(data_path=DATA_SET_PATH)
+    data = import_data(data_path=dataset_path)
     mongo_utils = MongoUtils(
-        auth_param=AUTH_PARAM, 
-        collection_name=COLLECTION, 
-        database_name=DATABASE, 
+        auth_param=auth_param, 
+        collection_name=collection_name, 
+        database_name=database_name, 
         data=data
     )
+
     mongo_utils.connect_to_cluster()
     print(mongo_utils.get_last_op_status())
-
-    mongo_utils.init_dabase(database_name=DATABASE)
+    """
+    mongo_utils.init_dabase(database_name=database_name)
     print(mongo_utils.get_last_op_status())
 
-    mongo_utils.init_collection(collection_name=COLLECTION)
+    mongo_utils.init_collection(collection_name=collection_name)
     print(mongo_utils.get_last_op_status())
 
     mongo_utils.init_documents(data=data)
     print(mongo_utils.get_last_op_status())
-
+    """
 
 if __name__ == "__main__":
     main()
