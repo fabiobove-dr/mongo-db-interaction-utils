@@ -38,7 +38,7 @@ class MongoUtils:
         """
         try:
             self.mongo_client = MongoClient(self.auth_param)
-            self.last_op_status = "Successfully connected to cluster."
+            self.last_op_status = "Successfully connected to Mongo Cluster"
         except Exception as e:
             self.last_op_status = f"Something went wrong during cluster connection: \n {e}"
             self.mongo_client = None
