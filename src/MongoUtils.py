@@ -33,8 +33,8 @@ class MongoUtils:
 
     def connect_to_cluster(self) -> None:
         """ 
-            connect_to_cluster, this method allow to instantiate a new cluster Connection 
-
+            connect_to_cluster, this method allow to instantiate a new cluster Connection using the pymongo lib
+            
             pram: None
             return: None
         """
@@ -45,7 +45,7 @@ class MongoUtils:
             self.last_op_status = f"Something went wrong during cluster connection: \n {e}"
             self.mongo_client = None
 
-    def init_dabase(self, database_name:str):
+    def init_dabase(self, database_name:str) -> None:
         """
             init_dabase method, creates (if don't exists yet) a new database with name <database_name>
 
@@ -71,7 +71,12 @@ class MongoUtils:
             self.database = None  
 
     def init_collection(self, collection_name:str):
-        # Create a new collection in our db: "celestial_bodies"
+        """
+        init_collection method, initialize a collection if doesn't exists already otherwhise returns the existing one
+
+        param: collection_name: The name of the collection 
+        return: Nothing
+        """
         try:
             self.collections_list = self.database.list_collection_names()
         except Exception as e:
@@ -89,9 +94,12 @@ class MongoUtils:
             self.last_op_status = f"Something went wrong during collection creation: \n {e}"
             self.collection = None
        
-    def init_documents(self, data:dict):
+    def init_documents(self, data:dict) -> None:
         """
-        init_documents method, inserts the documents into our collection
+        init_documents method, inserts the documents into our collection taken from the given data
+
+        param: data: a dict containing all the data to load in the collection
+        return: Nothing
         """
         try:
             self.collection.insert_many(data) # [self.collection.insert_one(elem) for elem in data]
@@ -99,8 +107,12 @@ class MongoUtils:
         except Exception as e:
            self.last_op_status = f"Something went wrong during document insertion: \n {e}"
     
-    def clean_collection(self, collection_name: str):
+    def clean_collection(self, collection_name: str) -> None:
         """
+        clean_collection method, remove all the documents of a collection
+
+        param: collection_name: A string containing the name of the collection.
+        return: Nothing
         """
         if collection_name is not None: # Load the desired collection, if collection_name is empty use the last collection connected to the class
             self.init_collection(collection_name)
