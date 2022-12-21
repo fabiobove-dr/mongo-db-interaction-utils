@@ -16,6 +16,7 @@ class MongoUtils:
         self.database           = None 
         self.collection         = None 
         self.database_list      = None
+        self.collections_list   = None
         self.auth_param         = auth_param
         self.collection_name    = collection_name
         self.database_name      = database_name
@@ -44,7 +45,6 @@ class MongoUtils:
             self.last_op_status = f"Something went wrong during cluster connection: \n {e}"
             self.mongo_client = None
 
-        
     def init_dabase(self, database_name:str):
         """
             init_dabase method, creates (if don't exists yet) a new database with name <database_name>
@@ -60,12 +60,12 @@ class MongoUtils:
             self.database_list = None
 
         try:
-            if database_name in self.database_list:
+            if self.database_list is not None and database_name in self.database_list:
                 self.last_op_status = f"Database {database_name} already exists."
                 self.database = self.mongo_client.get_database(database_name)
             else:
                 self.database = self.mongo_client[database_name]
-                self.last_op_status = f"Database {database_name}  created successfully."
+                self.last_op_status = f"Database <{database_name}> created successfully."
         except Exception as e:
             self.last_op_status = f"Something went wrong during database creation: \n {e}"
             self.database = None  
@@ -73,30 +73,41 @@ class MongoUtils:
     def init_collection(self, collection_name:str):
         # Create a new collection in our db: "celestial_bodies"
         try:
-            collections_list = self.database.list_collection_names()
-            if collection_name in collections_list:
+            self.collections_list = self.database.list_collection_names()
+        except Exception as e:
+            self.last_op_status = f"Can't get the list of collection: \n {e}"
+            self.collection = None
+            self.collections_list = None
+        try:
+            if self.collections_list is not None and collection_name in  self.collections_list:
                 self.last_op_status = f"Collection already exists."
                 self.collection = self.database.get_collection(collection_name)
             else:
                 self.collection = self.database[collection_name]
-                self.last_op_status = f"Collection {collection_name} created successfully."
+                self.last_op_status = f"Collection <{collection_name}> created successfully."
         except Exception as e:
             self.last_op_status = f"Something went wrong during collection creation: \n {e}"
             self.collection = None
        
-
     def init_documents(self, data:dict):
         """
         init_documents method, inserts the documents into our collection
         """
-        if self.collection.count_documents({}) > 0:  # We remove the old documents
-            self.collection.delete_many({})
         try:
-            [self.collection.insert_one(elem) for elem in data]
+            self.collection.insert_many(data) # [self.collection.insert_one(elem) for elem in data]
             self.last_op_status = f"Documents loaded successfully."
         except Exception as e:
            self.last_op_status = f"Something went wrong during document insertion: \n {e}"
-        
+    
+    def clean_collection(self, collection_name: str):
+        """
+        """
+        if collection_name is not None: # Load the desired collection, if collection_name is empty use the last collection connected to the class
+            self.init_collection(collection_name)
+        if self.collection is not None:
+            if self.collection.count_documents({}) > 0:  # Remove the old documents
+                self.collection.delete_many({})
+                self.last_op_status = f"Removed old files from the collection."
 
     def init_cluster(self):
         self.connect_to_cluster()
