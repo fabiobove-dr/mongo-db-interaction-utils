@@ -9,7 +9,7 @@ import json
 # Configuration Parameters for MongoDB connection
 
 # Load the oauth_settings.yml file
-stream          = open('oauth_settings.yml', 'r')
+stream          = open('../oauth.yml', 'r')
 settings        = yaml.load(stream, yaml.SafeLoader)
 dataset_path    = settings['dataset_path']
 auth_param      = settings['auth_param']
