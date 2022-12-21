@@ -36,10 +36,11 @@ def main():
 
     mongo_utils.connect_to_cluster()
     print(mongo_utils.get_last_op_status())
-    """
+    
     mongo_utils.init_dabase(database_name=database_name)
     print(mongo_utils.get_last_op_status())
-
+    
+    """
     mongo_utils.init_collection(collection_name=collection_name)
     print(mongo_utils.get_last_op_status())
 

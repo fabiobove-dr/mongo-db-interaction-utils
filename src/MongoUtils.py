@@ -15,6 +15,7 @@ class MongoUtils:
         self.last_op_status     = None
         self.database           = None 
         self.collection         = None 
+        self.database_list      = None
         self.auth_param         = auth_param
         self.collection_name    = collection_name
         self.database_name      = database_name
@@ -46,19 +47,20 @@ class MongoUtils:
         
     def init_dabase(self, database_name:str):
         """
-            create_dabase method, creates (if don't exists yet) a new database with name <database_name>
+            init_dabase method, creates (if don't exists yet) a new database with name <database_name>
 
             param: database_name: A string with the name of the new database
             return: Nothing
         """
         try: # Get the list of databases for the current cluster
-            db_list = self.mongo_client.list_database_names()
-            self.last_op_status = "Got the list of active databases"
+            self.database_list = self.mongo_client.list_database_names()
+            self.last_op_status = f"Got the list of active databases: \n {self.database_list}"
         except Exception as e:
-            self.last_op_status = f"Can't get the list of database, {e}"
-            return
+            self.last_op_status = f"Can't get the list of databases: \n {e}"
+            self.database_list = None
+
         try:
-            if database_name in db_list:
+            if database_name in self.database_list:
                 self.last_op_status = f"Database {database_name} already exists."
                 self.database = self.mongo_client.get_database(database_name)
             else:
