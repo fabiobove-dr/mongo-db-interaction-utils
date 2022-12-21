@@ -3,7 +3,7 @@ import os
 import json
 
 # Configuration Parameters for MongoDB connection
-AUTH_PARAM = "" # auth string
+AUTH_PARAM = "mongodb+srv://fabio:<password>@simplecluster.gqsg9w2.mongodb.net/?retryWrites=true&w=majority" # auth string
 DATABASE = "nasa" # database name
 COLLECTION = "celestial_bodies" # collection name
 DATA_SET_PATH = "dataset/dataset.json" # dataset path (dataset should be a .json file)
