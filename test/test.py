@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 sys.path[0] = str(Path(sys.path[0]).parent)
 
-from ..src.MongoUtils import MongoUtils
+from src.MongoUtils import MongoUtils
 import yaml
 import json
 
